@@ -1,10 +1,11 @@
-﻿using BROKE;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace BROKE_Defaults
+using BROKE;
+
+namespace BROKE_Payroll
 {
     public class Payroll : IFundingModifier
     {

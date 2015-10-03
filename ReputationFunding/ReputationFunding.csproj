@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{FCE32556-8FBF-4B32-A42F-0E52EB508C14}</ProjectGuid>
+    <ProjectGuid>{3409AD4D-67E2-4FB3-8E27-7C38C66562C2}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>BROKE_Defaults</RootNamespace>
-    <AssemblyName>BROKE_Defaults</AssemblyName>
+    <RootNamespace>BROKE_ReputationFunding</RootNamespace>
+    <AssemblyName>ReputationFunding</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -48,7 +48,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Payroll.cs" />
+    <Compile Include="ReputationFunding.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
