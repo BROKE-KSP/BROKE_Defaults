@@ -68,14 +68,14 @@ namespace BROKE_RepuationFunding
 
         public InvoiceItem ProcessQuarterly()
         {
-            float f = Math.Max((int)Math.Ceiling((BASE_FUNDING_YEARLY + (BASE_REP_FUNDING_YEARLY * Reputation.CurrentRep))), 0);
+            float f = Math.Max((int)Math.Ceiling(((BASE_FUNDING_YEARLY / 4) + ((BASE_REP_FUNDING_YEARLY / 4) * Reputation.CurrentRep))), 0);
             var invoice = new InvoiceItem(this, f, 0);
             return invoice;
         }
 
         public InvoiceItem ProcessYearly()
         {
-            float f = Math.Max((int)Math.Ceiling(((BASE_FUNDING_YEARLY / 4) + ((BASE_REP_FUNDING_YEARLY / 4) * Reputation.CurrentRep))), 0);
+            float f = Math.Max((int)Math.Ceiling((BASE_FUNDING_YEARLY + (BASE_REP_FUNDING_YEARLY * Reputation.CurrentRep))), 0);
             var invoice = new InvoiceItem(this, f, 0);
             return invoice;
         }
