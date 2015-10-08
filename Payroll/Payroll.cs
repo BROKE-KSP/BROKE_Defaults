@@ -115,7 +115,17 @@ namespace BROKE_Payroll
 
         public InvoiceItem ProcessYearly()
         {
-            return null;
+            float bill = 0f;
+            foreach (ProtoCrewMember crewMember in HighLogic.CurrentGame.CrewRoster.Crew)
+            {
+                if (!crewMember.rosterStatus.Equals(ProtoCrewMember.RosterStatus.Dead) && !crewMember.rosterStatus.Equals(ProtoCrewMember.RosterStatus.Missing))
+                {
+                    float paycheck = (int)Math.Round(GetWages(crewMember.experienceLevel, crewMember.rosterStatus.ToString()) * 426);
+                    bill += paycheck;
+                }
+            }
+            var invoice = new InvoiceItem(this, 0, bill);
+            return invoice;
         }
 
         public ConfigNode SaveData()
