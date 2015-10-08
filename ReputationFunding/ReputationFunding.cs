@@ -81,7 +81,7 @@ namespace BROKE_RepuationFunding
         }
 
         public ConfigNode SaveData()
-        {
+        { 
             return null;
         }
 
