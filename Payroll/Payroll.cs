@@ -7,16 +7,16 @@ using BROKE;
 
 namespace BROKE_Payroll
 {
-    public class Payroll : IFundingModifier
+    public class Payroll : IMultiFundingModifier
     {
-        private int threshold = 50;
-        private int level0 = 10;
-        private int level1 = 20;
-        private int level2 = 40;
-        private int level3 = 80;
-        private int level4 = 140;
-        private int level5 = 200;
-        private float standbyPct = 50;
+        private const int threshold = 50;
+        private const int level0 = 10;
+        private const int level1 = 20;
+        private const int level2 = 40;
+        private const int level3 = 80;
+        private const int level4 = 140;
+        private const int level5 = 200;
+        private const double standbyPct = 50;
 
         public string GetName()
         {
@@ -40,7 +40,7 @@ namespace BROKE_Payroll
 
         public bool hasMainGUI()
         {
-            return false;
+            return true;
         }
 
         public void DrawMainGUI()
@@ -63,9 +63,9 @@ namespace BROKE_Payroll
 
         }
 
-        public float GetWages(int level, string status)
+        public static double GetWages(int level, ProtoCrewMember.RosterStatus status)
         {
-            float w = level0;
+            double w;
             switch (level)
             {
                 case 0:
@@ -90,42 +90,36 @@ namespace BROKE_Payroll
                     w = 10;
                     break;
             }
-            if (status == "Available")
+            if (status == ProtoCrewMember.RosterStatus.Available)
             {
-                float pBuf = w / 100;
+                double pBuf = w / 100;
                 w = pBuf * standbyPct;
             }
             return w;
         }
 
-        public InvoiceItem ProcessQuarterly()
+        public IEnumerable<InvoiceItem> ProcessQuarterly()
         {
-            float bill = 0f;
             foreach (ProtoCrewMember crewMember in HighLogic.CurrentGame.CrewRoster.Crew)
             {
                 if (!crewMember.rosterStatus.Equals(ProtoCrewMember.RosterStatus.Dead) && !crewMember.rosterStatus.Equals(ProtoCrewMember.RosterStatus.Missing))
                 {
-                    float paycheck = (int)Math.Round(GetWages(crewMember.experienceLevel, crewMember.rosterStatus.ToString()) * 106.5);
-                    bill += paycheck;
+                    double paycheck = Math.Round(GetWages(crewMember.experienceLevel, crewMember.rosterStatus) * 106.5, MidpointRounding.AwayFromZero);
+                    yield return new InvoiceItem(this, 0, paycheck, crewMember.name);
                 }
             }
-            var invoice = new InvoiceItem(this, 0, bill);
-            return invoice;
         }
 
-        public InvoiceItem ProcessYearly()
+        public IEnumerable<InvoiceItem> ProcessYearly()
         {
-            float bill = 0f;
             foreach (ProtoCrewMember crewMember in HighLogic.CurrentGame.CrewRoster.Crew)
             {
                 if (!crewMember.rosterStatus.Equals(ProtoCrewMember.RosterStatus.Dead) && !crewMember.rosterStatus.Equals(ProtoCrewMember.RosterStatus.Missing))
                 {
-                    float paycheck = (int)Math.Round(GetWages(crewMember.experienceLevel, crewMember.rosterStatus.ToString()) * 426);
-                    bill += paycheck;
+                    double paycheck = Math.Round(GetWages(crewMember.experienceLevel, crewMember.rosterStatus) * 426, MidpointRounding.AwayFromZero);
+                    yield return new InvoiceItem(this, 0, paycheck, crewMember.name);
                 }
             }
-            var invoice = new InvoiceItem(this, 0, bill);
-            return invoice;
         }
 
         public ConfigNode SaveData()
@@ -145,7 +139,8 @@ namespace BROKE_Payroll
 
         public void OnInvoiceUnpaid(object sender, EventArgs args)
         {
-
+            var unpaidCrewMember = HighLogic.CurrentGame.CrewRoster.Crew.First(crew => crew.name == ((InvoiceItem)sender).ItemName);
+            //TODO: What to do when crew member is unpaid?
         }
     }
 }
