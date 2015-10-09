@@ -158,12 +158,26 @@ namespace BROKE_Payroll
 
         public ConfigNode SaveData()
         {
-            return null;
+            ConfigNode settings = new ConfigNode();
+            settings.AddValue("level0", level0);
+            settings.AddValue("level1", level1);
+            settings.AddValue("level2", level2);
+            settings.AddValue("level3", level3);
+            settings.AddValue("level4", level4);
+            settings.AddValue("level5", level5);
+            settings.AddValue("standByPct", standbyPct);
+            return settings;
         }
 
         public void LoadData(ConfigNode node)
         {
-
+            if (node.HasValue("level0")) level0 = (Int32)Int32.Parse(node.GetValue("level0"));
+            if (node.HasValue("level1")) level1 = (Int32)Int32.Parse(node.GetValue("level1"));
+            if (node.HasValue("level2")) level2 = (Int32)Int32.Parse(node.GetValue("level2"));
+            if (node.HasValue("level3")) level3 = (Int32)Int32.Parse(node.GetValue("level3"));
+            if (node.HasValue("level4")) level4 = (Int32)Int32.Parse(node.GetValue("level4"));
+            if (node.HasValue("level5")) level5 = (Int32)Int32.Parse(node.GetValue("level5"));
+            if (node.HasValue("standByPct")) standbyPct = (Int32)Int32.Parse(node.GetValue("standByPct"));
         }
 
         public void OnInvoicePaid(object sender, InvoiceItem.InvoicePaidEventArgs args)
