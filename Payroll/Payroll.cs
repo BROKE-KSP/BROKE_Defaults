@@ -2,21 +2,21 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
+using KSP;
+using UnityEngine;
 using BROKE;
 
 namespace BROKE_Payroll
 {
     public class Payroll : IMultiFundingModifier
     {
-        private const int threshold = 50;
-        private const int level0 = 10;
-        private const int level1 = 20;
-        private const int level2 = 40;
-        private const int level3 = 80;
-        private const int level4 = 140;
-        private const int level5 = 200;
-        private const double standbyPct = 50;
+        private int level0 = 10;
+        private int level1 = 20;
+        private int level2 = 40;
+        private int level3 = 80;
+        private int level4 = 140;
+        private int level5 = 200;
+        private double standbyPct = 50;
 
         public string GetName()
         {
@@ -50,12 +50,46 @@ namespace BROKE_Payroll
 
         public bool hasSettingsGUI()
         {
-            return false;
+            return true;
         }
 
         public void DrawSettingsGUI()
         {
-            
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("Level 0 Daily Wages: ");
+            GUILayout.FlexibleSpace();
+            level0 = Convert.ToInt32(GUILayout.TextField(level0.ToString(), 4, GUILayout.Width(50)));
+            GUILayout.EndHorizontal();
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("Level 1 Daily Wages: ");
+            GUILayout.FlexibleSpace();
+            level1 = Convert.ToInt32(GUILayout.TextField(level1.ToString(), 4, GUILayout.Width(50)));
+            GUILayout.EndHorizontal();
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("Level 2 Daily Wages: ");
+            GUILayout.FlexibleSpace();
+            level2 = Convert.ToInt32(GUILayout.TextField(level2.ToString(), 4, GUILayout.Width(50)));
+            GUILayout.EndHorizontal();
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("Level 3 Daily Wages: ");
+            GUILayout.FlexibleSpace();
+            level3 = Convert.ToInt32(GUILayout.TextField(level3.ToString(), 4, GUILayout.Width(50)));
+            GUILayout.EndHorizontal();
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("Level 4 Daily Wages: ");
+            GUILayout.FlexibleSpace();
+            level4 = Convert.ToInt32(GUILayout.TextField(level4.ToString(), 4, GUILayout.Width(50)));
+            GUILayout.EndHorizontal();
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("Level 5 Daily Wages: ");
+            GUILayout.FlexibleSpace();
+            level5 = Convert.ToInt32(GUILayout.TextField(level5.ToString(), 4, GUILayout.Width(50)));
+            GUILayout.EndHorizontal();
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("Percentage of Daily Wage for Standby: ");
+            GUILayout.FlexibleSpace();
+            standbyPct = Convert.ToInt32(GUILayout.TextField(standbyPct.ToString(), 4, GUILayout.Width(50)));
+            GUILayout.EndHorizontal();
         }
 
         public void DailyUpdate()
@@ -63,7 +97,7 @@ namespace BROKE_Payroll
 
         }
 
-        public static double GetWages(int level, ProtoCrewMember.RosterStatus status)
+        public double GetWages(int level, ProtoCrewMember.RosterStatus status)
         {
             double w;
             switch (level)
