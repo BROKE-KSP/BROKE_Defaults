@@ -91,7 +91,7 @@ namespace BROKE_RepuationFunding
         public void LoadData(ConfigNode node)
         {
             float.TryParse(node.GetValue("base_funding"), out base_funding);
-            float.TryParse(node.GetValue("AllTimeExpenses"), out rep_funding);
+            float.TryParse(node.GetValue("rep_funding"), out rep_funding);
         }
 
         public void OnInvoicePaid(object sender, InvoiceItem.InvoicePaidEventArgs args)
