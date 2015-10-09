@@ -10,8 +10,8 @@ namespace BROKE_RepuationFunding
 {
     public class ReputationFunding : IFundingModifier
     {
-        float BASE_REP_FUNDING_YEARLY = 990.0f;
-        float BASE_FUNDING_YEARLY = 10000.0f;
+        float rep_funding = 990.0f;
+        float base_funding = 10000.0f;
 
         public string GetName()
         {
@@ -53,11 +53,11 @@ namespace BROKE_RepuationFunding
             GUILayout.Label("Funding Settings:");
             GUILayout.BeginHorizontal();
             GUILayout.Label("Base Yearly Funding: ");
-            BASE_FUNDING_YEARLY = Single.Parse(GUILayout.TextField(BASE_FUNDING_YEARLY.ToString(), 10));
+            base_funding = Single.Parse(GUILayout.TextField(base_funding.ToString(), 10));
             GUILayout.EndHorizontal();
             GUILayout.BeginHorizontal();
             GUILayout.Label("Base Reputation Funding (per point/year): ");
-            BASE_REP_FUNDING_YEARLY = Single.Parse(GUILayout.TextField(BASE_REP_FUNDING_YEARLY.ToString(), 10));
+            rep_funding = Single.Parse(GUILayout.TextField(rep_funding.ToString(), 10));
             GUILayout.EndHorizontal();
         }
 
@@ -68,26 +68,30 @@ namespace BROKE_RepuationFunding
 
         public InvoiceItem ProcessQuarterly()
         {
-            float f = Math.Max((int)Math.Ceiling(((BASE_FUNDING_YEARLY / 4) + ((BASE_REP_FUNDING_YEARLY / 4) * Reputation.CurrentRep))), 0);
+            float f = Math.Max((int)Math.Ceiling(((base_funding / 4) + ((rep_funding / 4) * Reputation.CurrentRep))), 0);
             var invoice = new InvoiceItem(this, f, 0);
             return invoice;
         }
 
         public InvoiceItem ProcessYearly()
         {
-            float f = Math.Max((int)Math.Ceiling((BASE_FUNDING_YEARLY + (BASE_REP_FUNDING_YEARLY * Reputation.CurrentRep))), 0);
+            float f = Math.Max((int)Math.Ceiling((base_funding + (rep_funding * Reputation.CurrentRep))), 0);
             var invoice = new InvoiceItem(this, f, 0);
             return invoice;
         }
 
         public ConfigNode SaveData()
-        { 
-            return null;
+        {
+            ConfigNode settings = new ConfigNode();
+            settings.AddValue("base_funding", base_funding);
+            settings.AddValue("rep_funding", rep_funding);
+            return settings;
         }
 
         public void LoadData(ConfigNode node)
         {
-
+            float.TryParse(node.GetValue("base_funding"), out base_funding);
+            float.TryParse(node.GetValue("AllTimeExpenses"), out rep_funding);
         }
 
         public void OnInvoicePaid(object sender, InvoiceItem.InvoicePaidEventArgs args)
