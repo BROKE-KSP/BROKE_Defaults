@@ -40,7 +40,7 @@ namespace BROKE_RepuationFunding
 
         public void DrawMainGUI()
         {
-            GUILayout.Label("Hello, World!");
+            //GUILayout.Label("Hello, World!");
         }
 
         public bool hasSettingsGUI()
