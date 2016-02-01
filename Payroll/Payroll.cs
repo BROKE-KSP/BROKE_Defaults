@@ -239,7 +239,7 @@ namespace BROKE_Payroll
             {
                 unpaidCrewMember.type = ProtoCrewMember.KerbalType.Unowned; 
             }
-            unpaidCrew[unpaidCrewMember.name] = unpaidCrew[unpaidCrewMember.name] + 1;
+            unpaidCrew[crewName] = unpaidCrew[crewName] + 1;
         }
     }
 }
