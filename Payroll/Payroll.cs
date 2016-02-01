@@ -165,11 +165,27 @@ namespace BROKE_Payroll
                     yield return new InvoiceItem(this, 0, paycheck, crewMember.name);
                 }
             }
+            foreach (ProtoCrewMember crewMember in HighLogic.CurrentGame.CrewRoster.Unowned.Where(crew => unpaidCrew[crew.name] > 0))
+            {
+                if (!crewMember.rosterStatus.Equals(ProtoCrewMember.RosterStatus.Dead) && !crewMember.rosterStatus.Equals(ProtoCrewMember.RosterStatus.Missing))
+                {
+                    double paycheck = Math.Round(GetWages(crewMember.experienceLevel, crewMember.rosterStatus) * 106.5, MidpointRounding.AwayFromZero);
+                    yield return new InvoiceItem(this, 0, paycheck, crewMember.name);
+                }
+            }
         }
 
         public IEnumerable<InvoiceItem> ProcessYearly()
         {
             foreach (ProtoCrewMember crewMember in HighLogic.CurrentGame.CrewRoster.Crew)
+            {
+                if (!crewMember.rosterStatus.Equals(ProtoCrewMember.RosterStatus.Dead) && !crewMember.rosterStatus.Equals(ProtoCrewMember.RosterStatus.Missing))
+                {
+                    double paycheck = Math.Round(GetWages(crewMember.experienceLevel, crewMember.rosterStatus) * 426, MidpointRounding.AwayFromZero);
+                    yield return new InvoiceItem(this, 0, paycheck, crewMember.name);
+                }
+            }
+            foreach (ProtoCrewMember crewMember in HighLogic.CurrentGame.CrewRoster.Unowned.Where(crew => unpaidCrew[crew.name] > 0))
             {
                 if (!crewMember.rosterStatus.Equals(ProtoCrewMember.RosterStatus.Dead) && !crewMember.rosterStatus.Equals(ProtoCrewMember.RosterStatus.Missing))
                 {
