@@ -17,6 +17,29 @@ namespace BROKE_Payroll
         private int level4 = 140;
         private int level5 = 200;
         private double standbyPct = 50;
+        private Dictionary<string, int> unpaidCrew = new Dictionary<string,int>();
+
+        public Payroll()
+        {
+            // Initialize the unpaid crew info for all possible kerbals at construction time.
+            // This way we avoid the KeyNotFoundExceptions that were cropping up when I didn't do this here
+            foreach (ProtoCrewMember crewMember in HighLogic.CurrentGame.CrewRoster.Crew)
+            {
+                unpaidCrew[crewMember.name] = 0;
+            }
+            foreach (ProtoCrewMember crewMember in HighLogic.CurrentGame.CrewRoster.Unowned)
+            {
+                unpaidCrew[crewMember.name] = 0;
+            }
+            foreach (ProtoCrewMember crewMember in HighLogic.CurrentGame.CrewRoster.Applicants)
+            {
+                unpaidCrew[crewMember.name] = 0;
+            }
+            foreach (ProtoCrewMember crewMember in HighLogic.CurrentGame.CrewRoster.Tourist)
+            {
+                unpaidCrew[crewMember.name] = 0;
+            }
+        }
 
         public string GetName()
         {
@@ -166,6 +189,13 @@ namespace BROKE_Payroll
             settings.AddValue("level4", level4);
             settings.AddValue("level5", level5);
             settings.AddValue("standByPct", standbyPct);
+            foreach (var unpaid in unpaidCrew)
+            {
+                var node = new ConfigNode("Unpaid");
+                node.AddValue("Name", unpaid.Key);
+                node.AddValue("NumberUnpaid", unpaid.Value.ToString());
+                settings.AddData(node);
+            }
             return settings;
         }
 
@@ -178,17 +208,38 @@ namespace BROKE_Payroll
             if (node.HasValue("level4")) level4 = (Int32)Int32.Parse(node.GetValue("level4"));
             if (node.HasValue("level5")) level5 = (Int32)Int32.Parse(node.GetValue("level5"));
             if (node.HasValue("standByPct")) standbyPct = (Int32)Int32.Parse(node.GetValue("standByPct"));
+            foreach (var unpaidNode in node.GetNodes("Unpaid"))
+            {
+                unpaidCrew.Add(HighLogic.CurrentGame.CrewRoster.Unowned.First(crew => crew.name == unpaidNode.GetValue("name")).name,
+                    int.Parse(node.GetValue("NumberUnpaid")));
+            }
         }
 
         public void OnInvoicePaid(object sender, InvoiceItem.InvoicePaidEventArgs args)
         {
+            if (args.PaidInFull)
+            {
+                var unpaidCrewMember = HighLogic.CurrentGame.CrewRoster.Unowned.FirstOrDefault(crew => crew.name == ((InvoiceItem)sender).ItemName);
+                if (unpaidCrewMember == null) return;
+                unpaidCrew[unpaidCrewMember.name]--;
+                if(unpaidCrew[unpaidCrewMember.name] <= 0)
+                {
+                    unpaidCrew[unpaidCrewMember.name] = 0;
+                    unpaidCrewMember.type = ProtoCrewMember.KerbalType.Crew;
+                }
+            }
 
         }
 
         public void OnInvoiceUnpaid(object sender, EventArgs args)
         {
-            var unpaidCrewMember = HighLogic.CurrentGame.CrewRoster.Crew.First(crew => crew.name == ((InvoiceItem)sender).ItemName);
-            //TODO: What to do when crew member is unpaid?
+            var crewName = ((InvoiceItem)sender).ItemName;
+            var unpaidCrewMember = HighLogic.CurrentGame.CrewRoster.Crew.FirstOrDefault(crew => crew.name == crewName);
+            if (unpaidCrewMember != null)
+            {
+                unpaidCrewMember.type = ProtoCrewMember.KerbalType.Unowned; 
+            }
+            unpaidCrew[unpaidCrewMember.name] = unpaidCrew[unpaidCrewMember.name] + 1;
         }
     }
 }
