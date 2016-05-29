@@ -7,6 +7,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReputationFunding", "Reputa
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Payroll", "Payroll\Payroll.csproj", "{FCE32556-8FBF-4B32-A42F-0E52EB508C14}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpaceHotel", "SpaceHotel\SpaceHotel.csproj", "{21197C10-F8C7-4533-8310-3D93986C0BBA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BudgetFunding", "BudgetFunding\BudgetFunding.csproj", "{B7CDAD92-54F7-4E85-A52B-DC0057286AAF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +25,14 @@ Global
 		{FCE32556-8FBF-4B32-A42F-0E52EB508C14}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FCE32556-8FBF-4B32-A42F-0E52EB508C14}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FCE32556-8FBF-4B32-A42F-0E52EB508C14}.Release|Any CPU.Build.0 = Release|Any CPU
+		{21197C10-F8C7-4533-8310-3D93986C0BBA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{21197C10-F8C7-4533-8310-3D93986C0BBA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{21197C10-F8C7-4533-8310-3D93986C0BBA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{21197C10-F8C7-4533-8310-3D93986C0BBA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B7CDAD92-54F7-4E85-A52B-DC0057286AAF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B7CDAD92-54F7-4E85-A52B-DC0057286AAF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B7CDAD92-54F7-4E85-A52B-DC0057286AAF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B7CDAD92-54F7-4E85-A52B-DC0057286AAF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

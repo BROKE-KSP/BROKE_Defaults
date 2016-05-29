@@ -161,7 +161,8 @@ namespace BROKE_Payroll
             {
                 if (!crewMember.rosterStatus.Equals(ProtoCrewMember.RosterStatus.Dead) && !crewMember.rosterStatus.Equals(ProtoCrewMember.RosterStatus.Missing))
                 {
-                    double paycheck = Math.Round(GetWages(crewMember.experienceLevel, crewMember.rosterStatus) * 106.5, MidpointRounding.AwayFromZero);
+                    double paycheck = Math.Round(GetWages(crewMember.experienceLevel, crewMember.rosterStatus) * BROKE.BROKE.sPerQuarter/BROKE.BROKE.sPerDay, MidpointRounding.AwayFromZero);
+                    //MM 5/29/16: Changed to not hard code days per quarter
                     yield return new InvoiceItem(this, 0, paycheck, crewMember.name);
                 }
             }
@@ -169,7 +170,8 @@ namespace BROKE_Payroll
             {
                 if (!crewMember.rosterStatus.Equals(ProtoCrewMember.RosterStatus.Dead) && !crewMember.rosterStatus.Equals(ProtoCrewMember.RosterStatus.Missing))
                 {
-                    double paycheck = Math.Round(GetWages(crewMember.experienceLevel, crewMember.rosterStatus) * 106.5, MidpointRounding.AwayFromZero);
+                    double paycheck = Math.Round(GetWages(crewMember.experienceLevel, crewMember.rosterStatus) * BROKE.BROKE.sPerQuarter / BROKE.BROKE.sPerDay, MidpointRounding.AwayFromZero);
+                    //MM 5/29/16: Changed to not hard code days per quarter
                     yield return new InvoiceItem(this, 0, paycheck, crewMember.name);
                 }
             }
@@ -177,6 +179,7 @@ namespace BROKE_Payroll
 
         public IEnumerable<InvoiceItem> ProcessYearly()
         {
+            /*
             foreach (ProtoCrewMember crewMember in HighLogic.CurrentGame.CrewRoster.Crew)
             {
                 if (!crewMember.rosterStatus.Equals(ProtoCrewMember.RosterStatus.Dead) && !crewMember.rosterStatus.Equals(ProtoCrewMember.RosterStatus.Missing))
@@ -193,6 +196,9 @@ namespace BROKE_Payroll
                     yield return new InvoiceItem(this, 0, paycheck, crewMember.name);
                 }
             }
+            */
+            return null;
+            //MM 5/29/16: Removed since Quarter and Year are both run at each new year, which would result in double counting.
         }
 
         public ConfigNode SaveData()

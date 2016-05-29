@@ -53,11 +53,13 @@ namespace BROKE_RepuationFunding
             GUILayout.Label("Funding Settings:");
             GUILayout.BeginHorizontal();
             GUILayout.Label("Base Yearly Funding: ");
-            base_funding = Single.Parse(GUILayout.TextField(base_funding.ToString(), 10));
+            //MM 5/29/16: Switched to TryParse from Parse as TryParse won't cause an error if it fails
+            Single.TryParse(GUILayout.TextField(base_funding.ToString(), 10), out base_funding);
             GUILayout.EndHorizontal();
             GUILayout.BeginHorizontal();
             GUILayout.Label("Base Reputation Funding (per point/year): ");
-            rep_funding = Single.Parse(GUILayout.TextField(rep_funding.ToString(), 10));
+            //MM 5/29/16: Switched to TryParse from Parse as TryParse won't cause an error if it fails
+            Single.TryParse(GUILayout.TextField(rep_funding.ToString(), 10), out rep_funding);
             GUILayout.EndHorizontal();
         }
 
@@ -75,9 +77,11 @@ namespace BROKE_RepuationFunding
 
         public InvoiceItem ProcessYearly()
         {
-            float f = Math.Max((int)Math.Ceiling((base_funding + (rep_funding * Reputation.CurrentRep))), 0);
-            var invoice = new InvoiceItem(this, f, 0);
-            return invoice;
+           // float f = Math.Max((int)Math.Ceiling((base_funding + (rep_funding * Reputation.CurrentRep))), 0);
+           // var invoice = new InvoiceItem(this, f, 0);
+           // return invoice;
+            return null;
+            //MM 5/29/16: This would cause the funding to be given twice, since the quarter is processed as well as the year
         }
 
         public ConfigNode SaveData()
