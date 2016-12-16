@@ -197,7 +197,7 @@ namespace BROKE_Payroll
                 }
             }
             */
-            return null;
+            yield break;
             //MM 5/29/16: Removed since Quarter and Year are both run at each new year, which would result in double counting.
         }
 
