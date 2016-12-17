@@ -19,6 +19,8 @@ namespace BROKE_Payroll
         private double standbyPct = 50;
         private Dictionary<string, int> unpaidCrew = new Dictionary<string,int>();
 
+        private Dictionary<string, double> runningCrewSalaries = new Dictionary<string, double>();
+
         public Payroll()
         {
             // Initialize the unpaid crew info for all possible kerbals at construction time.
@@ -111,13 +113,43 @@ namespace BROKE_Payroll
             GUILayout.BeginHorizontal();
             GUILayout.Label("Percentage of Daily Wage for Standby: ");
             GUILayout.FlexibleSpace();
-            standbyPct = Convert.ToInt32(GUILayout.TextField(standbyPct.ToString(), 4, GUILayout.Width(50)));
+            standbyPct = Convert.ToDouble(GUILayout.TextField(standbyPct.ToString(), 4, GUILayout.Width(50)));
             GUILayout.EndHorizontal();
         }
 
         public void DailyUpdate()
         {
-
+            //Every crewmember gets their daily wages factored in
+            foreach (ProtoCrewMember crewMember in HighLogic.CurrentGame.CrewRoster.Crew)
+            {
+                if (!crewMember.rosterStatus.Equals(ProtoCrewMember.RosterStatus.Dead) && !crewMember.rosterStatus.Equals(ProtoCrewMember.RosterStatus.Missing))
+                {
+                    double paycheck = GetWages(crewMember.experienceLevel, crewMember.rosterStatus);
+                    if (!runningCrewSalaries.ContainsKey(crewMember.name))
+                    {
+                        runningCrewSalaries.Add(crewMember.name, paycheck);
+                    }
+                    else
+                    {
+                        runningCrewSalaries[crewMember.name] += paycheck;
+                    }
+                }
+            }
+            foreach (ProtoCrewMember crewMember in HighLogic.CurrentGame.CrewRoster.Unowned.Where(crew => unpaidCrew.ContainsKey(crew.name) && unpaidCrew[crew.name] > 0))
+            {
+                if (!crewMember.rosterStatus.Equals(ProtoCrewMember.RosterStatus.Dead) && !crewMember.rosterStatus.Equals(ProtoCrewMember.RosterStatus.Missing))
+                {
+                    double paycheck = GetWages(crewMember.experienceLevel, crewMember.rosterStatus);
+                    if (!runningCrewSalaries.ContainsKey(crewMember.name))
+                    {
+                        runningCrewSalaries.Add(crewMember.name, paycheck);
+                    }
+                    else
+                    {
+                        runningCrewSalaries[crewMember.name] += paycheck;
+                    }
+                }
+            }
         }
 
         public double GetWages(int level, ProtoCrewMember.RosterStatus status)
@@ -157,48 +189,16 @@ namespace BROKE_Payroll
 
         public IEnumerable<InvoiceItem> ProcessQuarterly()
         {
-            foreach (ProtoCrewMember crewMember in HighLogic.CurrentGame.CrewRoster.Crew)
+            foreach (KeyValuePair<string, double> wageSheet in runningCrewSalaries)
             {
-                if (!crewMember.rosterStatus.Equals(ProtoCrewMember.RosterStatus.Dead) && !crewMember.rosterStatus.Equals(ProtoCrewMember.RosterStatus.Missing))
-                {
-                    double paycheck = Math.Round(GetWages(crewMember.experienceLevel, crewMember.rosterStatus) * BROKE.BROKE.sPerQuarter/BROKE.BROKE.sPerDay, MidpointRounding.AwayFromZero);
-                    //MM 5/29/16: Changed to not hard code days per quarter
-                    yield return new InvoiceItem(this, 0, paycheck, crewMember.name);
-                }
+                yield return new InvoiceItem(this, 0, wageSheet.Value, wageSheet.Key);
             }
-            foreach (ProtoCrewMember crewMember in HighLogic.CurrentGame.CrewRoster.Unowned.Where(crew => unpaidCrew[crew.name] > 0))
-            {
-                if (!crewMember.rosterStatus.Equals(ProtoCrewMember.RosterStatus.Dead) && !crewMember.rosterStatus.Equals(ProtoCrewMember.RosterStatus.Missing))
-                {
-                    double paycheck = Math.Round(GetWages(crewMember.experienceLevel, crewMember.rosterStatus) * BROKE.BROKE.sPerQuarter / BROKE.BROKE.sPerDay, MidpointRounding.AwayFromZero);
-                    //MM 5/29/16: Changed to not hard code days per quarter
-                    yield return new InvoiceItem(this, 0, paycheck, crewMember.name);
-                }
-            }
+            runningCrewSalaries.Clear();
         }
 
         public IEnumerable<InvoiceItem> ProcessYearly()
         {
-            /*
-            foreach (ProtoCrewMember crewMember in HighLogic.CurrentGame.CrewRoster.Crew)
-            {
-                if (!crewMember.rosterStatus.Equals(ProtoCrewMember.RosterStatus.Dead) && !crewMember.rosterStatus.Equals(ProtoCrewMember.RosterStatus.Missing))
-                {
-                    double paycheck = Math.Round(GetWages(crewMember.experienceLevel, crewMember.rosterStatus) * 426, MidpointRounding.AwayFromZero);
-                    yield return new InvoiceItem(this, 0, paycheck, crewMember.name);
-                }
-            }
-            foreach (ProtoCrewMember crewMember in HighLogic.CurrentGame.CrewRoster.Unowned.Where(crew => unpaidCrew[crew.name] > 0))
-            {
-                if (!crewMember.rosterStatus.Equals(ProtoCrewMember.RosterStatus.Dead) && !crewMember.rosterStatus.Equals(ProtoCrewMember.RosterStatus.Missing))
-                {
-                    double paycheck = Math.Round(GetWages(crewMember.experienceLevel, crewMember.rosterStatus) * 426, MidpointRounding.AwayFromZero);
-                    yield return new InvoiceItem(this, 0, paycheck, crewMember.name);
-                }
-            }
-            */
             return null;
-            //MM 5/29/16: Removed since Quarter and Year are both run at each new year, which would result in double counting.
         }
 
         public ConfigNode SaveData()
@@ -211,29 +211,46 @@ namespace BROKE_Payroll
             settings.AddValue("level4", level4);
             settings.AddValue("level5", level5);
             settings.AddValue("standByPct", standbyPct);
+
+            ConfigNode currentSalaries = new ConfigNode();
+            foreach (KeyValuePair<string, double> salaries in runningCrewSalaries)
+            {
+                currentSalaries.AddValue(salaries.Key, salaries.Value);
+            }
+            settings.AddNode("RunningCrewSalaries", currentSalaries);
+
+            var node = new ConfigNode();
             foreach (var unpaid in unpaidCrew)
             {
-                var node = new ConfigNode("Unpaid");
-                node.AddValue("Name", unpaid.Key);
-                node.AddValue("NumberUnpaid", unpaid.Value.ToString());
-                settings.AddData(node);
+                node.AddValue(unpaid.Key, unpaid.Value);
             }
+            settings.AddNode("Unpaid", node);
             return settings;
         }
 
         public void LoadData(ConfigNode node)
         {
-            if (node.HasValue("level0")) level0 = (Int32)Int32.Parse(node.GetValue("level0"));
-            if (node.HasValue("level1")) level1 = (Int32)Int32.Parse(node.GetValue("level1"));
-            if (node.HasValue("level2")) level2 = (Int32)Int32.Parse(node.GetValue("level2"));
-            if (node.HasValue("level3")) level3 = (Int32)Int32.Parse(node.GetValue("level3"));
-            if (node.HasValue("level4")) level4 = (Int32)Int32.Parse(node.GetValue("level4"));
-            if (node.HasValue("level5")) level5 = (Int32)Int32.Parse(node.GetValue("level5"));
-            if (node.HasValue("standByPct")) standbyPct = (Int32)Int32.Parse(node.GetValue("standByPct"));
-            foreach (var unpaidNode in node.GetNodes("Unpaid"))
+            
+            if (node.HasValue("level0")) level0 = Int32.Parse(node.GetValue("level0"));
+            if (node.HasValue("level1")) level1 = Int32.Parse(node.GetValue("level1"));
+            if (node.HasValue("level2")) level2 = Int32.Parse(node.GetValue("level2"));
+            if (node.HasValue("level3")) level3 = Int32.Parse(node.GetValue("level3"));
+            if (node.HasValue("level4")) level4 = Int32.Parse(node.GetValue("level4"));
+            if (node.HasValue("level5")) level5 = Int32.Parse(node.GetValue("level5"));
+            if (node.HasValue("standByPct")) standbyPct = (double)double.Parse(node.GetValue("standByPct"));
+
+            runningCrewSalaries.Clear();
+            ConfigNode salariesNode = node.GetNode("RunningCrewSalaries");
+            foreach (ConfigNode.Value value in salariesNode.values)
             {
-                unpaidCrew.Add(HighLogic.CurrentGame.CrewRoster.Unowned.First(crew => crew.name == unpaidNode.GetValue("name")).name,
-                    int.Parse(node.GetValue("NumberUnpaid")));
+                runningCrewSalaries.Add(value.name, double.Parse(value.value));
+            }
+
+            unpaidCrew.Clear();
+            ConfigNode unpaidNode = node.GetNode("Unpaid");
+            foreach (ConfigNode.Value value in unpaidNode.values)
+            {
+                unpaidCrew.Add(value.name, int.Parse(value.value));
             }
         }
 
@@ -241,16 +258,21 @@ namespace BROKE_Payroll
         {
             if (args.PaidInFull)
             {
-                var unpaidCrewMember = HighLogic.CurrentGame.CrewRoster.Unowned.FirstOrDefault(crew => crew.name == ((InvoiceItem)sender).ItemName);
-                if (unpaidCrewMember == null) return;
-                unpaidCrew[unpaidCrewMember.name]--;
-                if(unpaidCrew[unpaidCrewMember.name] <= 0)
+                string crewName = ((InvoiceItem)sender).ItemName;
+                var unpaidCrewMember = HighLogic.CurrentGame.CrewRoster.Unowned.FirstOrDefault(crew => crew.name == crewName);
+                if (unpaidCrew.ContainsKey(crewName))
                 {
-                    unpaidCrew[unpaidCrewMember.name] = 0;
-                    unpaidCrewMember.type = ProtoCrewMember.KerbalType.Crew;
+                    unpaidCrew[crewName]--;
+                    if (unpaidCrew[crewName] <= 0)
+                    {
+                        unpaidCrew[crewName] = 0;
+                        if (unpaidCrewMember != null)
+                        {
+                            unpaidCrewMember.type = ProtoCrewMember.KerbalType.Crew;
+                        }
+                    }
                 }
             }
-
         }
 
         public void OnInvoiceUnpaid(object sender, EventArgs args)
@@ -261,7 +283,14 @@ namespace BROKE_Payroll
             {
                 unpaidCrewMember.type = ProtoCrewMember.KerbalType.Unowned; 
             }
-            unpaidCrew[crewName] = unpaidCrew[crewName] + 1;
+            if (unpaidCrew.ContainsKey(crewName))
+            {
+                unpaidCrew[crewName]++;
+            }
+            else
+            {
+                unpaidCrew.Add(crewName, 1);
+            }
         }
     }
 }
