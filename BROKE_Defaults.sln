@@ -1,13 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Express 2013 for Windows Desktop
-VisualStudioVersion = 12.0.40629.0
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReputationFunding", "ReputationFunding\ReputationFunding.csproj", "{3409AD4D-67E2-4FB3-8E27-7C38C66562C2}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Payroll", "Payroll\Payroll.csproj", "{FCE32556-8FBF-4B32-A42F-0E52EB508C14}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpaceHotel", "SpaceHotel\SpaceHotel.csproj", "{21197C10-F8C7-4533-8310-3D93986C0BBA}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BudgetFunding", "BudgetFunding\BudgetFunding.csproj", "{B7CDAD92-54F7-4E85-A52B-DC0057286AAF}"
 EndProject
@@ -25,10 +23,6 @@ Global
 		{FCE32556-8FBF-4B32-A42F-0E52EB508C14}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FCE32556-8FBF-4B32-A42F-0E52EB508C14}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FCE32556-8FBF-4B32-A42F-0E52EB508C14}.Release|Any CPU.Build.0 = Release|Any CPU
-		{21197C10-F8C7-4533-8310-3D93986C0BBA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{21197C10-F8C7-4533-8310-3D93986C0BBA}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{21197C10-F8C7-4533-8310-3D93986C0BBA}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{21197C10-F8C7-4533-8310-3D93986C0BBA}.Release|Any CPU.Build.0 = Release|Any CPU
 		{B7CDAD92-54F7-4E85-A52B-DC0057286AAF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{B7CDAD92-54F7-4E85-A52B-DC0057286AAF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B7CDAD92-54F7-4E85-A52B-DC0057286AAF}.Release|Any CPU.ActiveCfg = Release|Any CPU
